@@ -1,7 +1,13 @@
+PYTHON = python3
+
+.PHONY: test
+test:
+	$(PYTHON) -m pytest yagni --verbose
+
 .PHONY: build
 build:
 	rm -rf dist
-	python3 -m build
+	$(PYTHON) -m build
 
 .PHONY: upload
 upload: build

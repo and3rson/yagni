@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pydantic = "<2"
+pytz = "*"
+freezegun = "*"
+
+[dev-packages]
+black = "*"
+isort = "*"
+pytest = "*"
+pytest-cov = "*"
+radon = "*"
+xenon = "*"
+
+[requires]
+python_version = "3.9"

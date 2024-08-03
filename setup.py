@@ -10,5 +10,15 @@ setup(
     install_requires=[
         # 'six',
     ],
+    extras_require={
+        'dev': [
+            'black',
+            'isort',
+            'pytest',
+            'pytest-cov',
+            'radon',
+            'xenon',
+        ],
+    },
     python_requires=">=3.8",
 )

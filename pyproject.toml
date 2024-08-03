@@ -1,0 +1,14 @@
+[tool.black]
+line-length = 120
+target-version = ['py39']
+skip-string-normalization = true
+
+[tool.isort]
+profile = 'black'
+skip_glob = ['**/.venv']
+
+[tool.mypy]
+mypy_path = './stubs/'
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --cov-report=html --no-cov-on-fail -vv --cov=yagni --verbose"

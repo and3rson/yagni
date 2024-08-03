@@ -1,3 +1,15 @@
+"""
+Custom Pydantic types (v1.x).
+"""
+
+from enum import Enum
+from datetime import datetime, timezone
+import re
+
+from pydantic import ConstrainedStr
+from pydantic.validators import parse_datetime
+
+
 class StringEnum(str, Enum):
     """
     Sane enum that behaves like a string.
@@ -47,6 +59,10 @@ class CaseInsensitiveEnum(StringEnum):
     <Gender.MALE: 'male'>
     >>> Gender('FEMALE')
     <Gender.FEMALE: 'female'>
+    >>> Gender('helicopter')
+    Traceback (most recent call last):
+    ...
+    ValueError: 'helicopter' is not a valid Gender
     """
 
     @classmethod
@@ -98,7 +114,7 @@ class MBI(ConstrainedStr):
     >>> parse_obj_as(MBI, '1ax0Y67Dw34')
     '1AX0Y67DW34'
     >>> all(re.match(MBI.regex, mbi) for mbi in [
-    ...     '1AX0Y67DW34', '4C56de7FG00', '9EN1EQ3TT59', '2H52CD7GQ83', '3U90VV3UV09',     ■ pycodestyle: E501 line too long (86 > 79 characters)
+    ...     '1AX0Y67DW34', '4C56de7FG00', '9EN1EQ3TT59', '2H52CD7GQ83', '3U90VV3UV09',
     ... ])
     True
     >>> any(re.match(MBI.regex, mbi) for mbi in ['0AX0Y67DW34', '4256DE7FG00'])
@@ -130,6 +146,10 @@ class MBI(ConstrainedStr):
 
 class UTCDatetime(datetime):
     """
+    Datetime with UTC timezone.
+
+    Enforces UTC timezone and disallows naive timestamps.
+
     >>> from pydantic import BaseModel
     >>> import pytz
     >>> class Message(BaseModel):
@@ -153,7 +173,7 @@ class UTCDatetime(datetime):
       Naive timestamps are not allowed (type=value_error)
 
 
-    >>> Message(text='Батько наш Бандера!', created=naive.replace(tzinfo=pytz.timezone('Europe/Kyiv')))     ■ pycodestyle: E501 line too long (103 > 79 characters)
+    >>> Message(text='Батько наш Бандера!', created=naive.replace(tzinfo=pytz.timezone('Europe/Kyiv')))
     Traceback (most recent call last):
     ...
     pydantic.error_wrappers.ValidationError: 1 validation error for Message
@@ -167,18 +187,15 @@ class UTCDatetime(datetime):
     created
       Timestamp must be in UTC timezone (type=value_error)
 
-    >>> Message(text='Slava Ukraini!', created=naive.replace(tzinfo=timezone.utc))     ■ pycodestyle: E501 line too long (82 > 79 characters)
-    Message(text='Slava Ukraini!', created=datetime.datetime(1991, 8, 24, 10, 0, tzinfo=datetime.timezone.utc))     ■ pycodestyle: E501 line too long (111 > 79 characters)
+    >>> Message(text='Slava Ukraini!', created=naive.replace(tzinfo=timezone.utc))
+    Message(text='Slava Ukraini!', created=datetime.datetime(1991, 8, 24, 10, 0, tzinfo=datetime.timezone.utc))
 
     >>> Message(text='Slava Ukraini!', created=f'{naive_str}+00:00')
-    Message(text='Slava Ukraini!', created=datetime.datetime(1991, 8, 24, 10, 0, tzinfo=datetime.timezone.utc))     ■ pycodestyle: E501 line too long (111 > 79 characters)
+    Message(text='Slava Ukraini!', created=datetime.datetime(1991, 8, 24, 10, 0, tzinfo=datetime.timezone.utc))
 
     >>> Message(text='Slava Ukraini!', created=f'{naive_str}+00:00').json()
     '{"text": "Slava Ukraini!", "created": "1991-08-24T10:00:00+00:00"}'
     """
-
-    def __init__(self):
-        pass
 
     @classmethod
     def __get_validators__(cls):
